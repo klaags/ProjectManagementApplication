@@ -1,3 +1,16 @@
+class Project
+{
+private:
+	unsigned int pId; 			   		// project id;
+	deque<Task*> taskList; 		// collective tasks which comes under a project.
+public:
+	Project();
+	virtual ~Project();
+	Project& addTask(Task*);		// add Tasks to the project fluently. eg proj1.addTask(Task1).addTask(Task2).addTask(Task3)...
+	bool isExecutableInTime(time_t& targetEpoch); // checks whether given project can be executed in given time.
+	bool startExecution();			// start executing projects.
+};
+
 class ProjectManager
 {
 private:
