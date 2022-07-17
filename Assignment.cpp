@@ -1,3 +1,41 @@
+class borrower
+{
+	
+protected:
+	unsigned int bId; 		   // borrower Id
+	unsigned int resourceReq;  // required resource to complete task.
+	ResAllocStatus rStatus;    // allocation status from ResourceAllocater.
+public:
+	void getId();
+	virtual void setAllocStatus(ResAllocStatus status) = 0;
+	virtual void execute() = 0;
+};
+
+class Task: public borrower
+{
+private:
+	unsigned int userId; 	  // Id of the task user
+	unsigned int timeReq;     // required time(in secs) to finish a task.
+	Project& project;         // project the task belongs to.
+	vector<unsigned int> depIds // Task Ids that current task depends upon.
+	TaskStatus t_stat;	  // set Task status
+
+public:
+	Task(unsigned int uId, unsigned int timeReq, Project& proj);
+	Task& addDependency(unsigned int);
+	unsigned int getTaskId();                          // return borrower Id
+	vector<unsigned int>& getDependencyList(); 
+	bool checkResource();							  // check if the reource exceeds the resource pool's capacity.
+	void requestResource(); 			  // requests resource from ResourceAllocater.
+	void execute() override;						// to be called by ResourceAllocater once resource becomes available.
+	void setAllocStatus(ResAllocStatus status);                                   // to be called by ResourceAllocater to change status.
+	void setTaskStatus(TaskStatus t_stat);            // to be called by the project task belongs to to change status.
+	
+private:
+	void informResourceAllocator();				  // inform ResourceAllocator to de allocate resource once task is done executing. to be called at the end of execute.
+	void informProject();				  	  // inform task's project when done executing. to be called at the end of execute. 
+};
+
 class Project
 {
 private:
