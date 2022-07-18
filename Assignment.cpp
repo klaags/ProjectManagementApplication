@@ -5,9 +5,9 @@
 
 class Project;
 
-using namespace std
+using namespace std;
 
-enum TaskStatus		// Status of the task, to be updated by Task's project.
+enum class TaskStatus		// Status of the task, to be updated by Task's project.
 {
 	IDLE,		// Task is Idle
 	RUNNING,	// Task is Running/Waiting for resource.
@@ -15,7 +15,7 @@ enum TaskStatus		// Status of the task, to be updated by Task's project.
 	INVALID_TASK	// The resource request by the task exceeds the max resource available at ResourceAllocater
 };
 
-enum borrowerStatus     // Status of borrower
+enum class borrowerStatus     // Status of borrower
 {
 	IDLE,		// IDLE state
 	WLIST,		// Currently no resources are available.
@@ -98,6 +98,7 @@ public:
 	static ResourceAllocater* instance();		// return singleton instance of ResourceAllocater. If not present create one and send it.
 	static void deinstance();			// destroy the singleton instance.
 	static unsigned int getResource();		// returns totalResources available.
+	
 	void requests(Task* task);			// Request by a task for resources.
 	void releaseResource(Task* task);		// dealloc resource from a task once done executing.
 };
