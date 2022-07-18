@@ -120,3 +120,22 @@ public:
 	Project* getProjectById(unsigned int);  // given a projectId returns Project.
 	bool isProjectExecutableInTime(unsigned int projectId, time_t& targetTime); // checks whether the given project is executable in given time.
 };
+
+class LocalTimeFormat
+{
+private:
+	// Date specifics
+	unsigned int year;
+	unsigned int month;
+	unsigned int day;
+	
+	// Time Specifics
+	unsigned int hour;
+	unsigned int min;
+	unsigned int sec;
+
+	LocalTimeFormat() = delete;
+public:
+	LocalTimeFormat(unsigned int yyyy, unsigned int mm, unsigned int dd, unsigned int hr=0, unsigned int mn=0, unsigned int sc=0);
+	time_t toEpoch() const;
+};
