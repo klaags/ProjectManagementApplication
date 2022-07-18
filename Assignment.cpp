@@ -1,14 +1,32 @@
+enum TaskStatus		// Status of the task, to be updated by Task's project.
+{
+	IDLE,		// Task is Idle
+	RUNNING,	// Task is Running/Waiting for resource.
+	FINISHED,	// Task is Finished executing
+	INVALID_TASK	// The resource request by the task exceeds the max resource available at ResourceAllocater
+};
+
+enum borrowerStatus     // Status of borrower
+{
+	IDLE,		// IDLE state
+	WLIST,		// Currently no resources are available.
+	ALLOCATED,	// Resources are allocated to borrower.
+	DEALLOCATED,	// Resources are de allocated from borrower
+	INSUFF_RES	// Requested resource exceeds the total resource available.
+};
+
 class borrower
 {
 	
 protected:
 	unsigned int bId; 		   // borrower Id
 	unsigned int resourceReq;  // required resource to complete task.
-	ResAllocStatus rStatus;    // allocation status from ResourceAllocater.
+	borrowerStatus rStatus;    // allocation status from ResourceAllocater.
 public:
 	void getId();
-	virtual void setAllocStatus(ResAllocStatus status) = 0;
+	virtual void setAllocStatus(borrowerStatus status) = 0;
 	virtual void execute() = 0;
+	unsigned int getResourceReq();   // returns the required resource request.
 };
 
 class Task: public borrower
@@ -24,11 +42,11 @@ public:
 	Task(unsigned int uId, unsigned int timeReq, Project& proj);
 	Task& addDependency(unsigned int);
 	unsigned int getTaskId();                          // return borrower Id
-	vector<unsigned int>& getDependencyList(); 
-	bool checkResource();							  // check if the reource exceeds the resource pool's capacity.
+	vector<unsigned int>& getDependencyList(); 	   // get the dependency list from Task.
+	bool checkResource();							  // check if the reource exceeds the ResourceAllocater's capacity.
 	void requestResource(); 			  // requests resource from ResourceAllocater.
 	void execute() override;						// to be called by ResourceAllocater once resource becomes available.
-	void setAllocStatus(ResAllocStatus status);                                   // to be called by ResourceAllocater to change status.
+	void setAllocStatus(borrowerStatus status) override;                                   // to be called by ResourceAllocater to change status.
 	void setTaskStatus(TaskStatus t_stat);            // to be called by the project task belongs to to change status.
 	
 private:
