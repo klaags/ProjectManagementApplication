@@ -1,3 +1,12 @@
+#include<deque>
+#include<unordered_set>
+#include<unordered_map>
+#include<vector>
+
+class Project;
+
+using namespace std
+
 enum TaskStatus		// Status of the task, to be updated by Task's project.
 {
 	IDLE,		// Task is Idle
@@ -37,11 +46,13 @@ private:
 	unsigned int userId; 	  // Id of the task user
 	unsigned int timeReq;     // required time(in secs) to finish a task.
 	Project& project;         // project the task belongs to.
-	vector<unsigned int> depIds // Task Ids that current task depends upon.
+	vector<unsigned int> depIds; // Task Ids that current task depends upon.
 	TaskStatus t_stat;	  // set Task status
 
 public:
 	Task(unsigned int uId, unsigned int timeReq, unsigned int borrowerId, unsigned int resourceReq, Project& proj);
+	virtual ~Task();
+	
 	Task& addDependency(unsigned int);
 	unsigned int getTaskId();                          // return borrower Id
 	vector<unsigned int>& getDependencyList(); 	   // get the dependency list from Task.
