@@ -23,9 +23,11 @@ protected:
 	unsigned int resourceReq;  // required resource to complete task.
 	borrowerStatus rStatus;    // allocation status from ResourceAllocater.
 public:
-	void getId();
-	virtual void setAllocStatus(borrowerStatus status) = 0;
-	virtual void execute() = 0;
+	borrower(unsigned int borrowerId, unsigned int resourceReq);
+	virtual ~borrower();
+	void getId();  // return borrower Id
+	void setAllocStatus(borrowerStatus status); // to be called by ResourceAllocater to change status
+	virtual void execute() = 0;	// must be overrided by task.
 	unsigned int getResourceReq();   // returns the required resource request.
 };
 
@@ -39,14 +41,13 @@ private:
 	TaskStatus t_stat;	  // set Task status
 
 public:
-	Task(unsigned int uId, unsigned int timeReq, Project& proj);
+	Task(unsigned int uId, unsigned int timeReq, unsigned int borrowerId, unsigned int resourceReq, Project& proj);
 	Task& addDependency(unsigned int);
 	unsigned int getTaskId();                          // return borrower Id
 	vector<unsigned int>& getDependencyList(); 	   // get the dependency list from Task.
 	bool checkResource();							  // check if the reource exceeds the ResourceAllocater's capacity.
 	void requestResource(); 			  // requests resource from ResourceAllocater.
 	void execute() override;						// to be called by ResourceAllocater once resource becomes available.
-	void setAllocStatus(borrowerStatus status) override;                                   // to be called by ResourceAllocater to change status.
 	void setTaskStatus(TaskStatus t_stat);            // to be called by the project task belongs to to change status.
 	
 private:
@@ -69,6 +70,27 @@ public:
 	void doneExecuting(Task* task);         // tasks informs project once done executing.
 };
 
+//Singleton pattern, Incharge of resource pool allocates on request.
+class ResourceAllocater
+{
+private:
+	static const unsigned int totalResource;	// Total resources available.
+	static ResourceAllocater* self_ptr;		// pointer to the single instance.
+	deque<borrower*> requestedList;			// Requests from borrowers in order 
+	unordered_set<borrower*> allocatedList;		// Requests that has been granted resources.
+	
+	
+	ResourceAllocater(const unsigned int totRes);   // Initialise data members.
+	virtual ~ResourceAllocater();			// free up all members. 
+	
+public:
+	static ResourceAllocater* instance();		// return singleton instance of ResourceAllocater. If not present create one and send it.
+	static void deinstance();			// destroy the singleton instance.
+	static unsigned int getResource();		// returns totalResources available.
+	void requests(Task* task);			// Request by a task for resources.
+	void releaseResource(Task* task);		// dealloc resource from a task once done executing.
+};
+
 class ProjectManager
 {
 private:
@@ -84,5 +106,5 @@ public:
 	
 	unsigned int createProject();   //creates a project and assigns a unique id using id_ctr. 
 	Project* getProjectById(unsigned int);  // given a projectId returns Project.
-	bool isProjectExecutable(unsigned int projectId, time_t& targetTime); // checks whether the given project is executable in given time.
+	bool isProjectExecutableInTime(unsigned int projectId, time_t& targetTime); // checks whether the given project is executable in given time.
 };
