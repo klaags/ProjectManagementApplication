@@ -328,14 +328,13 @@ bool Project::isExecutableInTime(time_t& targetEpoch)
 				unsigned int taskId = pq.top()[0], resourceHeld = pq.top()[1], endTime = pq.top()[2];
 				pq.pop();
 				
-				currRes += topTask[1];
+				currRes += resourceHeld;
 				maxTime = max(maxTime, endTime);
 				
 				Task* curr_task = taskContainer[taskId];
 				bool taskAdded = false;
 				if(dependencyMap.find(taskId) != dependencyMap.end())
 				{
-				    cout << endl;
 					for(unsigned int t : dependencyMap[taskId])
 					{
 						--inDegreeMap[t];
